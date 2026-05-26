@@ -1,13 +1,14 @@
 # Design Review
 
-이 문서는 설계 보조 문서다. volume-2 제출 커밋에는 포함하지 않는다.
+이 문서는 현재 3주차 구현의 설계/구현 정합성 검토 문서다. 제출 커밋에는 포함하지 않는다.
 
 ## 검토 기준
 
-- 제출 파일은 `.docs/design`의 4개 파일만 사용한다.
-- 이번 주차는 설계만 다루고, 구현 변경은 다음 주차로 넘긴다.
+- 현재 주차는 3주차 구현 단계다.
+- `.docs/design`의 4개 파일은 volume-2 설계 이력으로 유지한다.
 - 목표 아키텍처는 도메인 우선 모듈러 모놀리스다.
-- 이번 주차 설계에는 `Point`/포인트 도메인을 포함하지 않는다.
+- 현재 구현에는 `Point`/포인트 도메인을 포함하지 않는다.
+- 구현 대상 도메인은 JPA/Spring 의존이 없는 POJO 도메인 엔티티와 infrastructure `*JpaEntity`를 분리한다.
 
 ## 현재 충분한 부분
 
@@ -37,6 +38,9 @@
 | ADMIN 상품/브랜드 삭제와 주문 이력 | 상품 삭제는 물리 삭제하지 않고 `ProductStatus.STOPPED`으로 전환하며, 브랜드 삭제도 `Brand.deletedAt` 표시와 관련 상품 `STOPPED` 전환으로 처리하는 soft-delete 정책으로 확정했다. |
 | 주문 조회 응답의 `paymentStatus` | 주문 생성 트랜잭션에서 `payment(order_id, status=REQUESTED)` row를 함께 생성해 주문 목록/상세 응답의 `paymentStatus`가 항상 존재하도록 확정했다. `Order`와 `Payment`는 생성 성공 후 1:1 관계다. |
 | 유저 API 시퀀스 인증 헤더 | user_required 시퀀스마다 `X-Loopers-LoginId`와 `X-Loopers-LoginPw` 검증 단계를 명시했다. |
+| 3주차 포인트 요구 제거 | 포인트 차감/포인트 부족은 이번 구현 범위에서 제외하고 3주차 가이드 체크리스트에서 제거했다. |
+| 도메인/JPA 분리 | 3주차 구현 대상은 POJO 도메인 엔티티와 infrastructure JPA 엔티티/adapter 매핑 구조로 정리했다. |
+| 1/2주차 문서 축약 | `.codeguide/loopers-1-week.md`, `.codeguide/loopers-2-week.md`는 legacy reference로 축약하고 현재 기준은 3주차 문서로 이동했다. |
 
 ## 빠진 부분 또는 보강 필요
 

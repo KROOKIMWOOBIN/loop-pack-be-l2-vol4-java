@@ -1,4 +1,4 @@
-# 2주차 클래스 설계
+# 클래스 설계 이력 및 3주차 반영 기준
 
 ## 읽는 포인트
 
@@ -403,13 +403,16 @@ classDiagram
 - `domain`은 비즈니스 규칙을 가진다.
 - `infrastructure`는 Repository와 외부 시스템 구현을 담당한다.
 - 도메인 모델은 외부 결제 시스템이나 HTTP 계층을 직접 알지 않는다.
+- 도메인 모델은 JPA/Spring 타입을 직접 알지 않고, infrastructure `*JpaEntity`가 DB 매핑을 담당한다.
+- repository adapter는 domain port를 구현하며 domain entity와 JPA entity를 변환한다.
 - `PaymentService`는 `DataPlatformClient`를 직접 알지 않고, `OrderEventPublisher`를 통해 outbox 저장만 요청한다.
 
-## 현재 구현과 목표 설계 차이
+## 현재 구현 반영 상태
 
-- 현재 구현의 `ProductV1Controller`는 상품 등록, 수정, 삭제를 `/api/v1/products`에 둔다.
-- 목표 설계에서는 상품 등록, 수정, 삭제를 `/api-admin/v1/products` 하위의 `ProductAdminController`에 둔다.
-- 구현 단계에서는 public 상품 mutation API를 ADMIN 경계로 이동하고, 대고객 `/api/v1/products`는 목록/상세 조회만 담당하게 한다.
+- 대고객 `/api/v1/products`는 목록/상세 조회만 담당한다.
+- 상품 등록, 수정, 삭제는 `/api-admin/v1/products` 하위의 `ProductAdminController`가 담당한다.
+- 3주차 구현 대상 도메인은 POJO domain entity와 infrastructure `*JpaEntity`로 분리했다.
+- `StockService`는 순수 도메인 서비스이며, Spring bean 등록은 infrastructure configuration에서 담당한다.
 - ADMIN 상품 삭제는 과거 주문 이력을 보호하기 위해 물리 삭제하지 않고 `STOPPED` 상태로 전환한다.
 
 ## 상태 정의와 전이 요약

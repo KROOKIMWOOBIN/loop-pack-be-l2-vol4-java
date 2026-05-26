@@ -1,6 +1,6 @@
 # Domain Glossary
 
-이 문서는 설계 보조 문서다. volume-2 제출 커밋에는 포함하지 않는다.
+이 문서는 현재 3주차 구현의 도메인 용어/상태명 기준 문서다. 제출 커밋에는 포함하지 않는다.
 
 ## 문서 목적
 
@@ -80,6 +80,8 @@
 | 주문 생성 시 결제 row 생성 | 주문 생성 트랜잭션에서 `PaymentStatus.REQUESTED` 결제 row를 함께 만든다. |
 | 인증 헤더 | 유저 API는 `X-Loopers-LoginId`, `X-Loopers-LoginPw`, ADMIN API는 `X-Loopers-Ldap`를 사용한다. |
 | 쿠폰 | 이번 설계에서는 주문 확장 포인트로만 기록한다. |
+| 도메인/JPA 분리 | 3주차 구현 대상 도메인은 POJO 도메인 엔티티와 infrastructure `*JpaEntity`를 분리한다. |
+| 도메인 서비스 구현 | `StockService`는 순수 도메인 서비스로 두고 infrastructure configuration에서 Spring bean으로 등록한다. |
 
 ## 외부 식별자
 

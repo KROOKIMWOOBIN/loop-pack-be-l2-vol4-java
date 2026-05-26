@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the API DTO contract for volume-2 implementation.
+This document defines the current API DTO contract for the commerce implementation.
 It is a helper document only and is not part of the submission set.
 
 ## Header Contract

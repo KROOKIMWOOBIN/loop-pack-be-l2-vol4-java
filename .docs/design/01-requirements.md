@@ -1,4 +1,4 @@
-# 2주차 요구사항 분석
+# 요구사항 분석 이력 및 3주차 반영 기준
 
 ## TL;DR
 
@@ -339,11 +339,11 @@
 | 주문 목록 조회 | GET | `/api-admin/v1/orders` | 필수: `X-Loopers-Ldap` | query: `page=0`, `size=20` | `orders[].{orderId,userId,orderStatus,paymentStatus,totalAmount,createdAt}`, `page` |
 | 주문 상세 조회 | GET | `/api-admin/v1/orders/{orderId}` | 필수: `X-Loopers-Ldap` | path: `orderId` | `orderId`, `userId`, `orderStatus`, `paymentStatus`, `failureReason`, `totalAmount`, `items[]` |
 
-현재 구현과 목표 API 차이:
+현재 구현 반영 상태:
 
-- 현재 `ProductV1Controller`는 상품 등록, 수정, 삭제를 `/api/v1/products` 아래에 둔다.
-- 목표 설계에서는 상품 등록, 수정, 삭제를 ADMIN API인 `/api-admin/v1/products` 아래로 둔다.
-- 구현 단계에서는 기존 public 상품 CRUD를 ADMIN 경계로 이동하거나, 호환 기간 동안 public mutation API를 제거 대상으로 표시한다.
+- 대고객 상품 API는 `/api/v1/products` 목록/상세 조회를 담당한다.
+- 브랜드/상품 mutation API는 `/api-admin/v1/brands`, `/api-admin/v1/products` 하위 ADMIN 경계로 분리했다.
+- 도메인 엔티티는 JPA/Spring 의존을 갖지 않고, infrastructure `*JpaEntity`가 영속성 매핑을 담당한다.
 - 브랜드 삭제는 `product.brand_id` FK와 과거 주문 이력을 보호하기 위해 브랜드 row를 보존하고 `deletedAt`만 표시한다.
 - 상품 삭제는 과거 주문의 `order_line.product_id` 참조와 상품 스냅샷을 보호하기 위해 물리 삭제가 아니라 `STOPPED` 상태 전환으로 처리한다.
 

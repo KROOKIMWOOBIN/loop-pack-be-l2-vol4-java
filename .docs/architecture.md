@@ -1,6 +1,6 @@
 # Architecture Decision
 
-이 문서는 설계 보조 문서다. volume-2 제출 커밋에는 포함하지 않는다.
+이 문서는 현재 3주차 구현의 아키텍처 기준 문서다. 제출 커밋에는 포함하지 않는다.
 
 ## 결정
 
@@ -63,16 +63,23 @@ commerce
 - 다른 모듈의 `infrastructure`를 직접 참조하지 않는다.
 - 모듈 간 협력은 application 계층의 유스케이스 또는 명시적인 domain interface를 통해 연결한다.
 - 외부 시스템 연동은 `infrastructure`에 둔다.
+- 도메인 레이어는 JPA, Spring, HTTP 같은 프레임워크 타입을 직접 사용하지 않는다.
+- 영속성 객체는 `infrastructure`의 `*JpaEntity`로 분리하고, repository adapter가 도메인 엔티티와 JPA 엔티티를 매핑한다.
+- 도메인 서비스는 상태를 가지지 않는 순수 객체로 두며, Spring bean 등록은 infrastructure configuration에서 처리한다.
+
+## 구현 아키텍처 기준
+
+현재 구현은 Onion/Hexagonal/CQRS 방향을 명시적으로 따른다.
+
+| 관점 | 기준 |
+| --- | --- |
+| Onion | 도메인 엔티티와 VO가 중심이며, application/infrastructure가 바깥에서 의존한다. |
+| Hexagonal | Repository, PaymentGateway, DataPlatformClient는 domain port이고 구현체는 infrastructure adapter다. |
+| CQRS | command service와 query service를 분리해 변경 유스케이스와 조회 조합의 책임을 나눈다. |
+| Persistence 분리 | `catalog`, `ordering`, `payment`, `event` 도메인 객체는 JPA 어노테이션을 갖지 않고, infrastructure JPA entity가 DB 스키마를 담당한다. |
 
 ## 현재 코드와의 관계
 
-현재 프로젝트는 `interfaces/api`, `application`, `domain`, `infrastructure`를 최상위 계층으로 두는 구조다. 구현은 나중에 진행하며, 이번 설계에서는 목표 구조를 먼저 확정한다.
+기존 예제 코드는 최상위 계층 우선 패키지를 일부 유지하지만, 3주차 구현 대상인 `catalog`, `ordering`, `payment`, `event`는 도메인 우선 구조로 이전했다.
 
-목표 구조와 현재 구조가 다르므로 구현 단계에서는 두 선택지가 있다.
-
-| 선택지 | 장점 | 단점 |
-| --- | --- | --- |
-| 현재 구조 유지 | 변경량이 작고 기존 코드와 충돌이 적다. | 서비스가 커질수록 한 도메인을 이해하기 위해 여러 최상위 패키지를 이동해야 한다. |
-| 도메인 우선 구조로 점진 이전 | 도메인 응집도가 높고 장기 확장에 유리하다. | 초기 패키지 이동과 import 변경이 필요하다. |
-
-이번 설계의 기준은 도메인 우선 구조이며, 구현 단계의 실제 이전 범위는 별도로 결정한다.
+3주차 구현 대상 도메인은 순수 도메인 엔티티와 infrastructure JPA 엔티티를 분리한다. 기존 예제 코드의 JPA Entity 구조는 과제 핵심 범위가 아니므로 별도 리팩터링 대상에서 제외한다.
